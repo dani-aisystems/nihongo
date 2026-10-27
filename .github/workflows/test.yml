@@ -1,0 +1,37 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  data-and-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate course data
+        run: node test/validate.js | tee validate.log && grep -q "BAD \[\]" validate.log && grep -q "UNKNOWN TILES {}" validate.log
+      - name: Build every lesson in every mode
+        run: node test/sessions.js | tee sessions.log && grep -q "^problems 0" sessions.log
+      - name: Practice stays within learned days
+        run: node test/practice_scope.js | tee scope.log && grep -q "out-of-scope 0" scope.log
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install playwright==1.56.0 && python -m playwright install --with-deps chromium
+      - name: End-to-end flows
+        run: bash test/build.sh && python test/flows.py | tee flows.log && ! grep -q "^FAIL" flows.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: test/shots/

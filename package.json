@@ -1,0 +1,14 @@
+{
+  "name": "nihongo",
+  "version": "1.0.0",
+  "description": "A 168-day Japanese course from zero to CEFR A1 as a static web app.",
+  "private": true,
+  "license": "MIT",
+  "author": "Daniel Yanchev (https://github.com/dani-aisystems)",
+  "repository": { "type": "git", "url": "https://github.com/dani-aisystems/nihongo.git" },
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "test": "node test/validate.js && node test/sessions.js && node test/practice_scope.js",
+    "test:e2e": "bash test/build.sh && python3 test/flows.py"
+  }
+}
