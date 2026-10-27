@@ -21,7 +21,10 @@ jobs:
         run: node test/practice_scope.js | tee scope.log && grep -q "out-of-scope 0" scope.log
 
   browser:
-    runs-on: ubuntu-latest
+    # Playwright 1.56 supports Ubuntu 24.04, but not GitHub's Ubuntu 26.04
+    # image. Pin the known-compatible runner instead of letting `latest` move
+    # underneath this intentionally pinned browser-test toolchain.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
